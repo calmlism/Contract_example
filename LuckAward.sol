@@ -31,6 +31,7 @@ contract LuckAward is IERC777Recipient {
     IERC777 _token;
 
     event NewLuckAward(address indexed user, uint256 amount, uint256 time);
+    event NewAward(address indexed user, uint256 amount, uint256 time);
 
     IERC1820Registry private _erc1820 = IERC1820Registry(
         0x88887eD889e776bCBe2f0f9932EcFaBcDfCd1820
@@ -91,7 +92,7 @@ contract LuckAward is IERC777Recipient {
 
                 uint256 luckDividends = sumAmount.sub(ownerDividends);
 
-                _token.send(from, luckDividends, "");
+                _token.send(luckAddress, luckDividends, "");
                 _token.send(owner, ownerDividends, "");
 
                 lastwinner = luckAddress;
@@ -101,7 +102,7 @@ contract LuckAward is IERC777Recipient {
                 rounds = rounds.add(1);
 
                 emit NewLuckAward(luckAddress, luckDividends, block.timestamp);
-
+                emit NewAward(from, amount, block.timestamp);
                 delete Participants;
             }
         } else {
